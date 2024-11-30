@@ -1,3 +1,6 @@
+// Adapted from:
+// stylus-sdk-c/include/stylus_entry.h
+
 // Copyright 2022-2023, Offchain Labs, Inc.
 // For licensing, see https://github.com/stylus-sdk-c/blob/stylus/licenses/COPYRIGHT.md
 
@@ -15,8 +18,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "hostio.h"
-#include "stylus_types.h"
+#include "../stylus-sdk-c/include/hostio.h"
+#include "../stylus-sdk-c/include/stylus_types.h"
 
 #ifdef __cplusplus
 extern "C" {
