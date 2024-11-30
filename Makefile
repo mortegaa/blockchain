@@ -18,10 +18,10 @@ contract.wasm: contract_unstripped.wasm
 	@wasm-strip -o $@ $<
 
 # Step 3: check the wasm using cargo-stylus
-# cargo stylus check --wasm-file ./contract.wasm -e $ENDPOINT --private-key=$PRIVATE_KEY
+# cargo stylus check --wasm-file ./contract.wasm -e https://sepolia-rollup.arbitrum.io/rpc
 
 # Step 4: deploy the wasm using cargo-stylus
-# cargo stylus check --wasm-file ./contract.wasm -e $ENDPOINT --private-key=$PRIVATE_KEY
+# cargo stylus deploy --wasm-file ./contract.wasm -e https://sepolia-rollup.arbitrum.io/rpc --cargo-stylus-version 0.5.3 --private-key $PRIVATE_KEY
 
 clean:
 	@rm $(OBJECTS) contract_unstripped.wasm contract.wasm

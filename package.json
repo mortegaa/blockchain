@@ -1,0 +1,13 @@
+{
+  "name": "playground",
+  "version": "1.0.0",
+  "scripts": {
+    "play": "npx tsx playground/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "viem": "^2.21.53"
+  }
+}
