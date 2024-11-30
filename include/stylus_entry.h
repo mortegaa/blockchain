@@ -1,6 +1,6 @@
 // Adapted from:
 // stylus-sdk-c/include/stylus_entry.h
-
+//
 // Copyright 2022-2023, Offchain Labs, Inc.
 // For licensing, see https://github.com/stylus-sdk-c/blob/stylus/licenses/COPYRIGHT.md
 

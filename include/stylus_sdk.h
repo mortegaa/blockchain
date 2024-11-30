@@ -1,3 +1,6 @@
+// Adapted from:
+// https://github.com/OffchainLabs/zig-on-stylus/blob/main/WALKTHROUGH.md
+//
 // Copyright 2022-2023, Offchain Labs, Inc.
 // For licensing, see https://github.com/stylus-sdk-c/blob/stylus/licenses/COPYRIGHT.md
 
