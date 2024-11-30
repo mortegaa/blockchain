@@ -6,6 +6,7 @@
 
 #include "../include/stylus_sdk.h"
 #include "../stylus-sdk-c/include/stylus_utils.h"
+#include "../stylus-sdk-c/include/storage.h"
 
 // function hola() public pure returns (string memory);
 ArbResult hola(uint8_t *input, size_t len)
