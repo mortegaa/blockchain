@@ -1,3 +1,6 @@
+// Purpose: Mock entrypoint for the Wasm module.
+// Do not modify this file.
+
 #[link(wasm_import_module = "vm_hooks")]
 extern "C" {
     fn pay_for_memory_grow(_: u16);
