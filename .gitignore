@@ -1,0 +1,4 @@
+.env
+*.o
+contract.wasm
+contract_unstripped.wasm
