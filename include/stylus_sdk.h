@@ -10,7 +10,8 @@
 #include "stylus_entry.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #define VM_HOOK(name) extern __attribute__((import_module("vm_hooks"), import_name(#name)))
