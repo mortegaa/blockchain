@@ -21,6 +21,7 @@ Since both have:
 
 ## Instalando Cargo Stylus
 
+- `git submodule update --init --recursive`
 - `cargo install cargo-stylus`
 - `rustup target add wasm32-unknown-unknown`
 
