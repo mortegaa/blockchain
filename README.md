@@ -19,6 +19,10 @@ Since both have:
 - LLVM (con wasm-ld): Disponible desde la versión 15 (llvm@15)
 - Rust cargo
 
+## Check to have `wasm-strip` installed
+
+Podemos instalarlo con `brew install wabt`
+
 ## Instalando Cargo Stylus
 
 - `git submodule update --init --recursive`
