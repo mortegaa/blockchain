@@ -1,9 +1,3 @@
-// You can compile this file with stock clang as follows
-// > make all
-//
-// For C programs that use the standard library, cross compile clang with wasi if your compiler doesn't support it
-// > https://github.com/WebAssembly/wasi-sdk
-
 #include "../include/stylus_sdk.h"
 #include "../stylus-sdk-c/include/stylus_utils.h"
 #include "../stylus-sdk-c/include/storage.h"
@@ -23,29 +17,6 @@ ArbResult inline _return_success_bebi32(bebi32 const retval)
   return res;
 }
 
-char *portable_strstr(const char *haystack, const char *needle)
-{
-  if (!*needle)
-    return (char *)haystack; // Return haystack if needle is empty
-
-  for (; *haystack; haystack++)
-  {
-    const char *h = haystack, *n = needle;
-    while (*h && *n && (*h == *n))
-      h++, n++;
-    if (!*n)
-      return (char *)haystack; // Match found
-  }
-  return NULL; // No match
-}
-
-void uint8_to_string(const uint8_t *input, size_t len, char *output)
-{
-  // Copy input to output and ensure null-termination
-  memcpy(output, input, len);
-  output[len] = '\0'; // Null-terminate the string
-}
-
 bool inline is_valid_address(uint8_t *input, size_t len)
 {
   // validate input is an address padded to 32 bytes
@@ -58,41 +29,72 @@ bool inline is_valid_address(uint8_t *input, size_t len)
   return true;
 }
 
+ArbResult calldata_len(uint8_t *input, size_t len)
+{
+  bebi32_set_u32(buf_out, len);
+  return _return_success_bebi32(buf_out);
+}
+
 ArbResult hola_mundo(uint8_t *input, size_t len)
 {
   return _return_short_string(Success, "Hola Mundo");
 }
 
-extern ArbResult get_sender(uint8_t *input, size_t len)
+char *ft_strnstr(const char *haystack, const char *needle, size_t len)
 {
-  msg_sender_padded(buf_out);
-  return _return_success_bebi32(buf_out);
-}
+  int i;
+  size_t limit;
 
-extern ArbResult ping_pong(uint8_t *input, size_t len)
-{
-  if (len >= 32) // Ensure the input length is within bounds
-    len = 31;    // Limit to 31 to reserve space for null-terminator in the string
-
-  char str_content[32];
-  uint8_to_string(input, len, str_content);
-
-  if (portable_strstr(str_content, "ping") != NULL)
+  i = 0;
+  limit = 0;
+  if ((*needle == 0 && *haystack == 0) || (*needle == 0 && len == 0))
+    return ((char *)haystack);
+  while (*haystack && len && limit < len)
   {
-    return _return_short_string(Success, "pong");
+    i = 0;
+    while (limit + i < len && needle[i] && needle[i] == haystack[i])
+      ++i;
+    if (needle[i] == 0)
+      return ((char *)haystack);
+    haystack++;
+    limit++;
   }
-  return _return_short_string(Success, "Nope!");
+  return (NULL);
 }
 
-int handler(size_t args_len)
+ArbResult ping_pong(uint8_t *input, size_t len)
 {
+  if (ft_strnstr(input, "ping", len))
+    return _return_short_string(Success, "pong");
+  return _return_short_string(Success, "ping");
+}
 
-  uint8_t args[args_len];
-  read_args(args);
+int handler(size_t argc)
+{
+  // Save the function calldata (selector(bytes4) + fn_args(bytes))
+  uint8_t argv[argc];
+  read_args(argv); // 4 btes (firma del a funcion)
 
-  const ArbResult result = ping_pong(args, args_len);
-  write_result(result.output, result.output_len);
-  return result.status;
+  // Define the registry array with registered functions
+  FunctionRegistry registry[] = {
+    // balance()
+    // address: 0x82B36e0c4C6E9cafA5CeACf481fa13e6CE2ac385
+    // uint256: 100000000000000000000....32bytes
+    // string: "242242121"
+    // bytes32: 0x82B36ac385
+      {to_function_selector("calldata_len()"), calldata_len},
+      {to_function_selector("ping_pong(bytes32)"), ping_pong},
+      {to_function_selector("hola_mundo()"), hola_mundo}, // Add more functions as needed here
+  };
+
+  uint32_t signature = *((uint32_t *)argv); // Take function selector
+
+  // Call the function based on the signature
+  ArbResult res = call_function(registry,
+                                sizeof(registry) / sizeof(registry[0]),
+                                signature, argv + 4, argc - 4 // Exclude the selector from calldata
+  );
+  return (write_result(res.output, res.output_len), res.status);
 }
 
 ENTRYPOINT(handler)
