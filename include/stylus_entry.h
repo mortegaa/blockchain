@@ -20,6 +20,8 @@
 
 #include "../stylus-sdk-c/include/hostio.h"
 #include "../stylus-sdk-c/include/stylus_types.h"
+#include "../stylus-sdk-c/include/stylus_utils.h"
+#include "../stylus-sdk-c/include/string.h"
 
 #ifdef __cplusplus
 extern "C"

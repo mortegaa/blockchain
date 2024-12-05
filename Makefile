@@ -37,4 +37,7 @@ re: clean all
 play: all
 	@npm run play
 
-.phony: all clean re
+frontend: all
+	@npm run frontend
+
+.phony: all clean re play frontend
