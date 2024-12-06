@@ -17,24 +17,6 @@ ArbResult inline _return_success_bebi32(bebi32 const retval)
   return res;
 }
 
-bool inline is_valid_address(uint8_t *input, size_t len)
-{
-  // validate input is an address padded to 32 bytes
-  if (len != 32)
-    return false;
-
-  if (!bebi32_is_u160(input))
-    return false;
-
-  return true;
-}
-
-ArbResult calldata_len(uint8_t *input, size_t len)
-{
-  bebi32_set_u32(buf_out, len);
-  return _return_success_bebi32(buf_out);
-}
-
 ArbResult hola_mundo(uint8_t *input, size_t len)
 {
   return _return_short_string(Success, "Hola Mundo");
@@ -62,13 +44,6 @@ char *ft_strnstr(const char *haystack, const char *needle, size_t len)
   return (NULL);
 }
 
-ArbResult ping_pong(uint8_t *input, size_t len)
-{
-  if (ft_strnstr(input, "ping", len))
-    return _return_short_string(Success, "pong");
-  return _return_short_string(Success, "ping");
-}
-
 int handler(size_t argc)
 {
   // Save the function calldata (selector(bytes4) + fn_args(bytes))
@@ -77,13 +52,11 @@ int handler(size_t argc)
 
   // Define the registry array with registered functions
   FunctionRegistry registry[] = {
-    // balance()
-    // address: 0x82B36e0c4C6E9cafA5CeACf481fa13e6CE2ac385
-    // uint256: 100000000000000000000....32bytes
-    // string: "242242121"
-    // bytes32: 0x82B36ac385
-      {to_function_selector("calldata_len()"), calldata_len},
-      {to_function_selector("ping_pong(bytes32)"), ping_pong},
+      // balance()
+      // address: 0x82B36e0c4C6E9cafA5CeACf481fa13e6CE2ac385
+      // uint256: 100000000000000000000....32bytes
+      // string: "242242121"
+      // bytes32: 0x82B36ac385
       {to_function_selector("hola_mundo()"), hola_mundo}, // Add more functions as needed here
   };
 
