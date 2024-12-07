@@ -1,30 +1,49 @@
-import { createPublicClient, http, parseAbi, stringToHex } from "viem"
+import { createPublicClient, createWalletClient, http, parseAbi } from "viem"
 import { arbitrumSepolia } from "viem/chains"
+import { privateKeyToAccount } from "viem/accounts"
 import "dotenv/config"
 
 const ABI = parseAbi([
-  "function hola_mundo() view returns (string)",
-  "function calldata_len() view returns (uint256)",
-  "function ping_pong(bytes32) view returns (string)",
+  "function get_value() view returns (uint256)",
+  "function set_value(uint256) public",
 ])
 
-const client = createPublicClient({
+const account = privateKeyToAccount((process as any).env.PRIVATE_KEY)
+
+const client = createWalletClient({
+  chain: arbitrumSepolia,
+  transport: http(),
+  account,
+})
+
+const publicClient = createPublicClient({
   chain: arbitrumSepolia,
   transport: http(),
 })
 
-// https://sepolia.arbiscan.io/address/0x6a5a8573fe27c42ce960dcb7a19cf957f0e8f837
-const CONTRACT_ADDRESS = "0x6a5a8573fe27c42ce960dcb7a19cf957f0e8f837"
+// https://sepolia.arbiscan.io/address/const CONTRACT_ADDRESS = "0x46be8751225be83d7a9b97fec0214c53795d8477"
+const CONTRACT_ADDRESS = "0x46be8751225be83d7a9b97fec0214c53795d8477"
 
-async function main() {
-  const result = await client.readContract({
+async function write() {
+  const result = await client.writeContract({
     abi: ABI,
     address: CONTRACT_ADDRESS,
-    functionName: "ping_pong",
-    args: [stringToHex("pong", { size: 32 })],
+    functionName: "set_value",
+    args: [BigInt(12)],
   })
 
   console.debug(`Contract: ${result}`)
 }
 
-main()
+async function read() {
+  const result = await publicClient.readContract({
+    abi: ABI,
+    address: CONTRACT_ADDRESS,
+    functionName: "get_value",
+  })
+
+  console.debug(`Contract: ${result}`)
+}
+
+// read()
+// write()

@@ -3,6 +3,8 @@
 #include "../stylus-sdk-c/include/storage.h"
 #include "../stylus-sdk-c/include/string.h"
 
+#define STORAGE_SLOT__value 0x0
+
 /**
  * General utils/helpers
  */
@@ -17,50 +19,53 @@ ArbResult inline _return_success_bebi32(bebi32 const retval)
   return res;
 }
 
-ArbResult hola_mundo(uint8_t *input, size_t len)
+ArbResult set_value(uint8_t *input, size_t len)
 {
-  return _return_short_string(Success, "Hola Mundo");
+
+  if (len != 32)
+  {
+    // revert if input length is not 32 bytes
+    return _return_short_string(Failure, "InvalidLength");
+  }
+
+  uint8_t *slot_address = (uint8_t *)(STORAGE_SLOT__value + 0); // Get the slot address
+
+  // Allocate a temporary buffer to store the input
+  storage_cache_bytes32(slot_address, input);
+
+  // Flush the cache to store the value permanently
+  storage_flush_cache(false);
+  return _return_success_bebi32(input);
 }
 
-char *ft_strnstr(const char *haystack, const char *needle, size_t len)
+ArbResult get_value(uint8_t *input, size_t len)
 {
-  int i;
-  size_t limit;
 
-  i = 0;
-  limit = 0;
-  if ((*needle == 0 && *haystack == 0) || (*needle == 0 && len == 0))
-    return ((char *)haystack);
-  while (*haystack && len && limit < len)
+  uint8_t *slot_address = (uint8_t *)(STORAGE_SLOT__value + 0); // Get the slot address
+
+  storage_load_bytes32(slot_address, buf_out);
+  if (bebi32_is_zero(buf_out))
   {
-    i = 0;
-    while (limit + i < len && needle[i] && needle[i] == haystack[i])
-      ++i;
-    if (needle[i] == 0)
-      return ((char *)haystack);
-    haystack++;
-    limit++;
+    return _return_short_string(Failure, "NotSet");
   }
-  return (NULL);
+
+  return _return_success_bebi32(buf_out);
 }
 
 int handler(size_t argc)
 {
-  // Save the function calldata (selector(bytes4) + fn_args(bytes))
+  // Save the function calldata
   uint8_t argv[argc];
-  read_args(argv); // 4 btes (firma del a funcion)
+  read_args(argv); // 4 bytes for selector + function arguments
 
   // Define the registry array with registered functions
   FunctionRegistry registry[] = {
-      // balance()
-      // address: 0x82B36e0c4C6E9cafA5CeACf481fa13e6CE2ac385
-      // uint256: 100000000000000000000....32bytes
-      // string: "242242121"
-      // bytes32: 0x82B36ac385
-      {to_function_selector("hola_mundo()"), hola_mundo}, // Add more functions as needed here
+      {to_function_selector("set_value(uint256)"), set_value},
+      {to_function_selector("get_value()"), get_value},
+      // Add more functions as needed here
   };
 
-  uint32_t signature = *((uint32_t *)argv); // Take function selector
+  uint32_t signature = *((uint32_t *)argv); // Parse function selector
 
   // Call the function based on the signature
   ArbResult res = call_function(registry,
