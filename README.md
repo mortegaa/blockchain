@@ -38,6 +38,11 @@ Si no, podemos instalarlo con `brew install wabt`
 - `make` para generar el archivo contract.wasm
 - `cargo stylus check --wasm-file ./contract.wasm -e https://sepolia-rollup.arbitrum.io/rpc` (si tenemos output en verde estamos listos 🚀🚀)
 
+## ¿Qué problema solucionamos?
+- Seguro que muchos de vosotros habéis jugado al Wordle y, como siempre, os habéis encontrado con el mismo problema. Hacéis una competición entre amigos y, cuando toca compartir los intentos, tienes que escribirlos en un chat. Un rollo, ¿verdad? Y no sólo eso, algunos hasta tienen la cara dura de modificar los intentos que han hecho. ¡Y por si fuera poco, tienes que sumar las puntuaciones de todos manualmente para tener un ranking!
+
+- Pues bien, nuestra aplicación se encarga de todo eso de forma automática. Y lo mejor de todo, gracias a la seguridad de la blockchain, nos aseguramos de que los tramposos no puedan hacer de las suyas. Aquí no hay trucos ni trampas, sólo un juego limpio y transparente.
+
 ## Frontend
 -  `cd frontend && npm install `
 -  `npm run dev`
