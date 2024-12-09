@@ -74,4 +74,5 @@ Si no, podemos instalarlo con `brew install wabt`
 
 ## Extras updates
 La idea futura es que el smart contract se encargue de toda la gestión del juego como sumar los scores, ordenarlos e incluir varios jugadores.
+También incluir la posibilidad de que jueguen varios jugadores. La idea está pensada y parece funcional, falta la implementación.
 Parte de esas funciones podemos encontrarlas en el repositorio de nuestra compañera Gema -> https://github.com/gbrasam/blockchain
