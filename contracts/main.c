@@ -1,56 +1,10 @@
 #include "../include/stylus_sdk.h"
-#include "../stylus-sdk-c/include/stylus_utils.h"
 #include "../stylus-sdk-c/include/storage.h"
 #include "../stylus-sdk-c/include/string.h"
+#include "../stylus-sdk-c/include/stdlib.h"
 
-#define STORAGE_SLOT__value 0x0
-
-/**
- * General utils/helpers
- */
-
-// buffer used to write output, avoiding malloc
-uint8_t buf_out[32];
-
-// succeed and return a bebi32
-ArbResult inline _return_success_bebi32(bebi32 const retval)
-{
-  ArbResult res = {Success, retval, 32};
-  return res;
-}
-
-ArbResult set_value(uint8_t *input, size_t len)
-{
-
-  if (len != 32)
-  {
-    // revert if input length is not 32 bytes
-    return _return_short_string(Failure, "InvalidLength");
-  }
-
-  uint8_t *slot_address = (uint8_t *)(STORAGE_SLOT__value + 0); // Get the slot address
-
-  // Allocate a temporary buffer to store the input
-  storage_cache_bytes32(slot_address, input);
-
-  // Flush the cache to store the value permanently
-  storage_flush_cache(false);
-  return _return_success_bebi32(input);
-}
-
-ArbResult get_value(uint8_t *input, size_t len)
-{
-
-  uint8_t *slot_address = (uint8_t *)(STORAGE_SLOT__value + 0); // Get the slot address
-
-  storage_load_bytes32(slot_address, buf_out);
-  if (bebi32_is_zero(buf_out))
-  {
-    return _return_short_string(Failure, "NotSet");
-  }
-
-  return _return_success_bebi32(buf_out);
-}
+#include "../include/handle_data.h"
+#include "../include/player.h"
 
 int handler(size_t argc)
 {
@@ -60,8 +14,11 @@ int handler(size_t argc)
 
   // Define the registry array with registered functions
   FunctionRegistry registry[] = {
-      {to_function_selector("set_value(uint256)"), set_value},
+      {to_function_selector("set_value(bytes32)"), set_value},
       {to_function_selector("get_value()"), get_value},
+      {to_function_selector("add_player(bytes8)"), add_player},
+      {to_function_selector("get_player_info(bytes8)"), get_player_info},
+      {to_function_selector("set_player_info(bytes32)"), set_player_info},
       // Add more functions as needed here
   };
 
